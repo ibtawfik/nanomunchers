@@ -1,0 +1,164 @@
+<html>
+
+<head>
+    <script src="assets/jquery-2.1.4.js"></script>
+    <script src="assets/underscore.js"></script>
+
+
+    <style>
+        .square {
+            width: 35px;
+            height: 35px;
+            background-color: black;
+            border: 5px ridge darkblue;
+            float: left;
+            box-sizing: border-box;
+        }
+
+        .row {
+            height: 25px;
+            clear: both;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<script>
+
+    var higherLevelDiv = undefined;
+    var squares = {};
+    var nodeList;
+
+    function poll(){
+//        if(higherLevelDiv !== undefined){
+//            higherLevelDiv.parentNode.removeChild(higherLevelDiv);
+//        }
+        if(higherLevelDiv === undefined){
+            higherLevelDiv = document.createElement('div');
+            document.body.appendChild(higherLevelDiv);
+        }
+        console.log("POLLING");
+        $.ajax({
+            url: '/game-state'
+        }).done(function (data) {
+            nodeList = _.map(data.nodes, function(item) {
+                return item
+            });
+
+            if(jQuery.isEmptyObject(squares)){
+
+
+                var maxX = _.max(nodeList, function (node) {
+                    return node.xLoc;
+                }).xLoc;
+
+                var maxY = _.max(nodeList, function (node) {
+                    return node.yLoc;
+                }).yLoc;
+
+
+
+                for (var i = maxY; i >= 0; i--) {
+                    var row = document.createElement('div');
+                    row.className = 'row';
+
+                    higherLevelDiv.appendChild(row);
+
+                    for (var j = 0; j <= maxX; j++) {
+                        var square = document.createElement('div');
+
+                        square.className = 'square';
+
+
+                        squares[j + ',' + i] = square;
+
+                        row.appendChild(square)
+                    }
+                }
+
+
+
+                var nodeMap = _.map(data.edges, function(edgeInfo, nodeId) {
+                    var node = data.nodes[nodeId];
+                    var square = squares[node.xLoc + ',' + node.yLoc];
+
+                    if(edgeInfo['UP'] !== undefined) {
+                        square.style.borderTop = 'dotted'
+                    }
+
+                    if(edgeInfo['DOWN'] !== undefined) {
+                        square.style.borderBottom = 'dotted'
+                    }
+
+                    if(edgeInfo['LEFT'] !== undefined) {
+                        square.style.borderLeft = 'dotted'
+                    }
+
+                    if(edgeInfo['RIGHT'] !== undefined) {
+
+                        square.style.borderRight = 'dotted'
+                    }
+
+                });
+                repaint();
+            }else{
+                repaint();
+            }
+        });
+        setTimeout(poll,50)
+    }
+
+    function repaint(){
+        _.each(nodeList, function(node){
+            var square = squares[node.xLoc + ',' + node.yLoc];
+
+            if(node.status == 'FREE') {
+                square.style.backgroundColor = 'lightblue';
+            }
+
+            if(node.status == 'EATEN_P1') {
+                square.style.backgroundColor = 'gold';
+                if(square.hasChildNodes()){
+                    square.removeChild(square.firstChild)
+                }
+            }
+
+            if(node.status == 'EATEN_P2') {
+                square.style.backgroundColor = 'darkorange';
+                if(square.hasChildNodes()){
+                    square.removeChild(square.firstChild)
+                }
+            }
+
+            if(node.status == 'OCCUPIED_P1') {
+
+                if(square.hasChildNodes() === false){
+                    var bert = document.createElement('img');
+                    bert.src = 'assets/bertleft.png';
+                    square.appendChild(bert);
+                    square.style.backgroundColor = 'gold';
+                }
+
+            }
+
+            if(node.status == 'OCCUPIED_P2') {
+                if(square.hasChildNodes() === false){
+                    var coily = document.createElement('img');
+                    coily.src = 'assets/coily.png';
+                    square.appendChild(coily);
+                    square.style.backgroundColor = 'darkorange';
+                }
+            }
+        });
+    }
+
+    poll();
+
+</script>
+
+
+</body>
+
+</html>
