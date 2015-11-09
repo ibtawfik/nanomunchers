@@ -16,10 +16,14 @@ public class Connector implements Runnable{
     private Socket clientSocket;
     private int playerId;
     private Game game = Game.getInstance();
+    private int numOfMoves;
+    private long slowDown;
 
-    public Connector(Socket clientSocket, int playerId){
+    public Connector(Socket clientSocket, int playerId, int numOfMoves, long slowDown){
         this.playerId = playerId;
         this.clientSocket = clientSocket;
+        this.numOfMoves = numOfMoves;
+        this.slowDown = slowDown;
     }
 
     public void run() {
@@ -27,12 +31,12 @@ public class Connector implements Runnable{
             PrintWriter out =  new PrintWriter(clientSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String inputLine;
-            String outputLine = "";
             LinkedList<String> commands = new LinkedList<String>();
             while ((inputLine = in.readLine()) != null) {
-
+                Thread.sleep(slowDown);
                 if(inputLine.contains("REGISTER:")){
-                    registerPlayer(inputLine);
+                    String commandString = "START\n" + registerPlayer(inputLine) + "\nEND";
+                    out.println(commandString);
                 }else{
                     commands.add(inputLine);
                 }
@@ -40,23 +44,22 @@ public class Connector implements Runnable{
                 if(game.readyForMove(playerId)){
                     if(commands.size() > 0){
                         game.receiveMoves(playerId,commands.pop());
-                        out.println(poll());
+                        out.println("START\n" + poll() + "\nEND");
                     }else{
-                        out.println("WAITING");
+                        out.println("START\nWAITING\nEND");
                     }
                 }
-
-
-
             }
         }catch (IOException e){
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    private void registerPlayer(String inputLine){
+    private String registerPlayer(String inputLine){
         String teamName = inputLine.replaceAll("REGISTER:", "");
-        game.registerPlayer(playerId,teamName,10);
+        return game.registerPlayer(playerId,teamName,numOfMoves);
     }
 
     private String poll(){
@@ -64,7 +67,6 @@ public class Connector implements Runnable{
             LinkedList<String> messages = game.getMessages(playerId);
             if(messages.size() > 0){
                 for(String message: messages){
-                    System.out.println(message);
                     return message;
                 }
             }

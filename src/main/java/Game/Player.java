@@ -22,7 +22,7 @@ public class Player {
         this.playerName = playerName;
 
         this.unused = new LinkedList<Piece>();
-        for(int i = 0; i <= pieces; i++){
+        for(int i = 0; i < pieces; i++){
             Piece piece = new Piece(playerId);
             this.unused.add(piece);
         }
@@ -87,5 +87,33 @@ public class Player {
                 this.dead.add(piece);
             }
         }
+    }
+
+    public String getPlayerId(){
+        return this.playerId.name();
+    }
+
+    public int unusedCount(){
+        return this.unused.size();
+    }
+
+    public int deadCount(){
+        return dead.size();
+    }
+
+    public int inPlayCount(){
+        return inPlay.size();
+    }
+
+    public int getScore(){
+        int score  = 0;
+        for(Piece piece: this.inPlay){
+            score = score + piece.getNodesEaten();
+        }
+
+        for(Piece piece: this.dead){
+            score = score + piece.getNodesEaten();
+        }
+        return score;
     }
 }

@@ -26,25 +26,27 @@ public class UIApplication extends Application<UIConfiguration> {
     }
 
     public static void main(String[] args) throws Exception {
-//        args[0] = "10";
-//        args[1] = "/Users/islamt/Desktop/input";
+
 
         Game game = Game.getInstance();
-        game.createBoard(new File("/Users/islam/Desktop/input.txt"));
-//        game.registerPlayer(1,"LeonSpark",5);
-//        game.registerPlayer(2,"AI",5);
-//        game.receiveMoves(1,"76,UP,DOWN,LEFT,RIGHT");
-//        game.receiveMoves(2,"32,UP,DOWN,LEFT,RIGHT");
+        //Inputs must be done through environment variables because dropwizard is expecting blank args.
+        Integer numberOfMoves  = Integer.valueOf(System.getenv("numberOfMoves"));
+        game.createBoard(new File(System.getenv("inputFile")));
+        long slowDown = 0;
+        if(System.getenv().containsKey("slowDown")){
+            slowDown = Long.valueOf(System.getenv("slowDown"));
+        }
+
         new UIApplication().run(args);
         try {
             ServerSocket serverSocket = new ServerSocket(1377);
 
             Socket player1Socket = serverSocket.accept();
-            Runnable connectionHandler = new Connector(player1Socket, 1);
+            Runnable connectionHandler = new Connector(player1Socket, 1,numberOfMoves,slowDown);
             new Thread(connectionHandler).start();
 
             Socket player2Socket = serverSocket.accept();
-            Runnable connectionHandler2 = new Connector(player2Socket, 2);
+            Runnable connectionHandler2 = new Connector(player2Socket, 2,numberOfMoves,slowDown);
             new Thread(connectionHandler2).start();
 
         } catch (IOException e) {

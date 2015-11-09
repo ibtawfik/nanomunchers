@@ -1,7 +1,5 @@
 package Communication;
 
-import Game.PlayerId;
-import ch.qos.logback.classic.PatternLayout;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,30 +12,36 @@ import java.util.Random;
  * Created by islam on 11/1/15.
  */
 public class Client {
+
+    private static StringBuffer command = new StringBuffer();
+
     public static void main(String[] args) {
-        Random random = new Random();
+
         try {
             Socket socket = new Socket("localhost", 1377);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String state;
-            System.out.println(PlayerId.ONE);
-            out.println("REGISTER:AI");
-            //out.println("100,UP,DOWN,LEFT,RIGHT");
+            out.println("REGISTER:" + args[0]);
             while ((state = in.readLine()) != null) {
-                System.out.println("Received:" + state);
-                Thread.sleep(1000);
-                String command = random.nextInt(100) + ",UP,DOWN,LEFT,RIGHT";
-                System.out.println(command);
-                out.println(command);
-
-                //        game.receiveMoves(1,"76,UP,DOWN,LEFT,RIGHT");
-//        game.receiveMoves(2,"32,UP,DOWN,LEFT,RIGHT");
+                if(state.equals("START")){
+                    command = new StringBuffer();
+                }
+                else if(state.equals("END")){
+                    out.println(process(command.toString()));
+                }else{
+                    command.append(state + "\n");
+                }
             }
         } catch (IOException eIO) {
             System.out.println(eIO.getMessage());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+    }
+
+    private static String process(String command){
+        System.out.println(command);
+        //Starting point for your program
+        Random random = new Random();
+        return random.nextInt(100) + ",UP,DOWN,LEFT,RIGHT";
     }
 }

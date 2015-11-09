@@ -111,42 +111,18 @@ public class Node {
                 case UP:
                     up.place(this.occupant);
                     this.occupant.placeOnNode(up);
-                    if(this.occupant.getPlayerId().equals(PlayerId.ONE)) {
-                        this.status = Status.EATEN_P1;
-                    }else{
-                        this.status = Status.EATEN_P2;
-                    }
-                    this.occupant = null;
                     break;
                 case DOWN:
                     down.place(this.occupant);
                     this.occupant.placeOnNode(down);
-                    if(this.occupant.getPlayerId().equals(PlayerId.ONE)) {
-                        this.status = Status.EATEN_P1;
-                    }else{
-                        this.status = Status.EATEN_P2;
-                    }
-                    this.occupant = null;
                     break;
                 case LEFT:
                     left.place(this.occupant);
                     this.occupant.placeOnNode(left);
-                    if(this.occupant.getPlayerId().equals(PlayerId.ONE)) {
-                        this.status = Status.EATEN_P1;
-                    }else{
-                        this.status = Status.EATEN_P2;
-                    }
-                    this.occupant = null;
                     break;
                 case RIGHT:
                     right.place(this.occupant);
                     this.occupant.placeOnNode(right);
-                    if(this.occupant.getPlayerId().equals(PlayerId.ONE)) {
-                        this.status = Status.EATEN_P1;
-                    }else{
-                        this.status = Status.EATEN_P2;
-                    }
-                    this.occupant = null;
                     break;
             }
     }
@@ -159,6 +135,15 @@ public class Node {
      * After all pieces have moved onto thier desired node decide which ones to keep and which ones to eject
      */
     public void moveTime(PlayerId playerWithPriority){
+        //First check if the node is currently occupied. If so then move the occupant along
+        if(this.occupant != null){
+            if(this.occupant.getPlayerId().equals(PlayerId.ONE)){
+                this.status = Status.EATEN_P1;
+            }else{
+                this.status = Status.EATEN_P2;
+            }
+        }
+
         boolean occuopantSelected = false;
         List<Piece> newPieces = new LinkedList<Piece>();
 

@@ -42,13 +42,13 @@ public class Game {
     /****************************************************************************************
      * Commands from the players
      ****************************************************************************************/
-    public void registerPlayer(int playerId, String playerName, int numPieces){
+    public String registerPlayer(int playerId, String playerName, int numPieces){
         if(playerId == 1){
             player1 = new Player(PlayerId.ONE, numPieces,playerName);
-            System.out.println("Registered: Game.Player 1, " + numPieces + ", " + playerName );
+            return this.toString();
         }else{
             player2 = new Player(PlayerId.TWO, numPieces, playerName);
-            System.out.println("Registered: Game.Player 2, " + numPieces + ", " + playerName );
+            return this.toString();
         }
     }
 
@@ -92,6 +92,8 @@ public class Game {
     }
 
     private void advanceTime(){
+
+
         for(Node node: nodes.values()){
             node.moveTime(advantage);
         }
@@ -192,6 +194,7 @@ public class Game {
     }
 
     public String toString(){
+
         int player_1_score=0;
         int player_2_score = 0;
 
@@ -215,9 +218,16 @@ public class Game {
                 player_2_score++;
             }
         }
-        //builder.append("PlayerID,PlayerName,unused,dead,inPlay,score\n");
+        if(player1 != null){
+            builder.append("\n\nPlayerID,PlayerName,unused,dead,inPlay,score\n");
+            builder.append(player1.getPlayerId() + "," + player1.getPlayerName() + "," + player1.unusedCount() +
+                    "," + player1.deadCount() + "," + player1.inPlayCount() + "," +player1.getScore() + "\n");
 
-
+            if(player2 != null){
+                builder.append(player2.getPlayerId() + "," + player2.getPlayerName() + "," + player2.unusedCount() +
+                        "," + player2.deadCount() + "," + player2.inPlayCount() + "," +player2.getScore() + "\n");
+            }
+        }
         return builder.toString();
     }
 
