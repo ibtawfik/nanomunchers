@@ -92,7 +92,7 @@ public class Piece {
     }
 
     public boolean isNewPiece(){
-        System.out.println(moveCount);
+        //System.out.println(moveCount);
         return moveCount == 0;
     }
 

@@ -6,9 +6,12 @@ import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -37,7 +40,10 @@ public class UIApplication extends Application<UIConfiguration> {
         if (System.getProperties().containsKey("slowDown")) {
             slowDown = Long.valueOf(System.getProperty("slowDown"));
 
-            new UIApplication().run(args);
+            UIApplication uiApplication = new UIApplication();
+            LogManager.getRootLogger().setLevel(Level.OFF);
+            uiApplication.run(args);
+
             try {
                 ServerSocket serverSocket = new ServerSocket(1377);
 
