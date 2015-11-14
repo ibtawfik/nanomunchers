@@ -108,6 +108,7 @@ public class Game {
             //If pass then do nothing
             if(nextMove.toLowerCase().trim().equals("pass")){
                 player.setNextMove(null);
+                return;
             }
 
             //Otherwise make all the moves
