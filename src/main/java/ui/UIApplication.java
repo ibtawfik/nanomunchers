@@ -4,6 +4,8 @@ import Communication.Connector;
 import Game.Game;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.logging.AppenderFactory;
+import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.log4j.Level;
@@ -19,12 +21,12 @@ public class UIApplication extends Application<UIConfiguration> {
 
     @Override
     public void initialize(Bootstrap<UIConfiguration> myConfigurationBootstrap) {
-        myConfigurationBootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
+        myConfigurationBootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html", "config.yaml"));
+
     }
 
     @Override
     public void run(UIConfiguration uiConfiguration, Environment environment) throws Exception {
-        System.out.println(environment);
         final GameResource resource = new GameResource();
         environment.jersey().register(resource);
     }
@@ -46,7 +48,6 @@ public class UIApplication extends Application<UIConfiguration> {
 
             try {
                 ServerSocket serverSocket = new ServerSocket(1377);
-
                 Socket player1Socket = serverSocket.accept();
                 Runnable connectionHandler = new Connector(player1Socket, 1, numberOfMoves, slowDown);
                 new Thread(connectionHandler).start();

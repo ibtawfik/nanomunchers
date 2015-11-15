@@ -18,7 +18,7 @@ public class Game {
 
     //We have to decide who lives in each round if two people choose the same space.
     //That is decided by this advantage number.
-    private PlayerId advantage = PlayerId.ONE;
+    //private PlayerId advantage = PlayerId.ONE;
 
     private String p1_nextMove;
     private String p2_nextMove;
@@ -74,24 +74,33 @@ public class Game {
 
 
     private void makeMove(){
-        if(advantage.equals(PlayerId.ONE)){
+        PlayerId a = advantage();
+        if(a.equals(PlayerId.ONE)){
             move(player1);
             move(player2);
-            advanceTime();
+            advanceTime(a);
             this.player1Messages.push(this.toString());
             this.player2Messages.push(this.toString());
-            advantage = PlayerId.TWO;
         }else{
             move(player2);
             move(player1);
-            advanceTime();
+            advanceTime(a);
             this.player1Messages.push(this.toString());
             this.player2Messages.push(this.toString());
-            advantage = PlayerId.ONE;
         }
     }
 
-    private void advanceTime(){
+    private PlayerId advantage(){
+        Random random = new Random();
+        Integer player = random.nextInt(1);
+        if(player.equals(0)){
+            return PlayerId.ONE;
+        }else{
+            return PlayerId.TWO;
+        }
+    }
+
+    private void advanceTime(PlayerId advantage){
 
 
         for(Node node: nodes.values()){
@@ -261,6 +270,38 @@ public class Game {
         }
     }
 
+    /**
+     * Used for the ui, returns the players stats
+     * @return
+     */
+    public Map<String,List<String>> getPlayerStats(){
+        Map<String,List<String>> playerStats = new HashMap<String, List<String>>();
+        if(player1 != null){
+            List<String> p1Stats = new LinkedList<String>();
+
+            p1Stats.add(player1.getPlayerName());
+            p1Stats.add(String.valueOf(player1.unusedCount()));
+            p1Stats.add(String.valueOf(player1.deadCount()));
+            p1Stats.add(String.valueOf(player1.inPlayCount()));
+            p1Stats.add(String.valueOf(player1.getScore()));
+
+            playerStats.put(player1.getPlayerId(),p1Stats);
+
+            if(player2 != null){
+                List<String> p2Stats = new LinkedList<String>();
+
+                p2Stats.add(player2.getPlayerName());
+                p2Stats.add(String.valueOf(player2.unusedCount()));
+                p2Stats.add(String.valueOf(player2.deadCount()));
+                p2Stats.add(String.valueOf(player2.inPlayCount()));
+                p2Stats.add(String.valueOf(player2.getScore()));
+
+                playerStats.put(player2.getPlayerId(),p2Stats);
+            }
+        }
+
+        return playerStats;
+    }
 
 
 }

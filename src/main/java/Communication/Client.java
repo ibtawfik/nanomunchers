@@ -34,6 +34,7 @@ public class Client {
                 }
             }
         } catch (IOException eIO) {
+            System.out.println("ERROR");
             System.out.println(eIO.getMessage());
         }
     }
