@@ -92,7 +92,7 @@ public class Game {
 
     private PlayerId advantage(){
         Random random = new Random();
-        Integer player = random.nextInt(1);
+        Integer player = random.nextInt(2);
         if(player.equals(0)){
             return PlayerId.ONE;
         }else{
