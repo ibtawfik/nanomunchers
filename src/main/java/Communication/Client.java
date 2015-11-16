@@ -44,5 +44,6 @@ public class Client {
         //Starting point for your program
         Random random = new Random();
         return random.nextInt(100) + ",UP,DOWN,LEFT,RIGHT";
+            //return 103 +",DOWN,RIGHT,UP,LEFT";
     }
 }
