@@ -41,9 +41,12 @@ public class Client {
 
     private static String process(String command){
         System.out.println(command);
+        //return "103,DOWN,UP,LEFT,RIGHT|103,DOWN,LEFT,UP,RIGHT";
+
         //Starting point for your program
         Random random = new Random();
-        return random.nextInt(100) + ",UP,DOWN,LEFT,RIGHT";
+        return random.nextInt(125) + ",UP,DOWN,LEFT,RIGHT";
             //return 103 +",DOWN,RIGHT,UP,LEFT";
+        //return "PASS";
     }
 }

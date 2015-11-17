@@ -27,6 +27,7 @@ public class Game {
     private LinkedList<String> player2Messages = new LinkedList<String>();
 
 
+
     public static Game getInstance(){
         if(game == null){
             game = new Game();
@@ -53,11 +54,11 @@ public class Game {
     }
 
     public void receiveMoves(int player, String move){
-        //Move is expected to be either PASS or nodeId,up,down,left,right \n nodeId,left,up,right,down
-        if(player == 1){
+
+        if(player1 != null && player == 1){
             p1_nextMove = move;
             player1.setNextMove(p1_nextMove);
-        }else{
+        }else if(player2 != null && player == 2){
             p2_nextMove = move;
             player2.setNextMove(p2_nextMove);
         }
@@ -69,7 +70,6 @@ public class Game {
                 p2_nextMove = null;
             }
         }
-
     }
 
 
